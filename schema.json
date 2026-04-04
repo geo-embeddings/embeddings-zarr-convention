@@ -40,9 +40,10 @@
           "description": "REQUIRED. URL reference to the encoder model used to generate embeddings"
         },
         "geoemb:source_data": {
-          "type": "string",
-          "format": "uri",
-          "description": "REQUIRED. URL reference to the source dataset from which embeddings were derived"
+          "type": "array",
+          "items": { "type": "string", "format": "uri" },
+          "minItems": 1,
+          "description": "REQUIRED. URL references to the source datasets from which embeddings were derived"
         },
         "geoemb:data_type": {
           "type": "string",
@@ -58,6 +59,15 @@
         },
         "geoemb:quantization": {
           "$ref": "#/$defs/quantizationObject"
+        },
+        "geoemb:spatial_layout": {
+          "type": "string",
+          "enum": ["utm_zones", "global"],
+          "description": "Spatial organization scheme. 'utm_zones': one group per UTM zone (utm01-utm60). 'global': single array in a global CRS."
+        },
+        "geoemb:build_version": {
+          "type": "string",
+          "description": "Version of the software that built this store"
         },
         "geoemb:benchmark": {
           "type": "array",
@@ -162,7 +172,7 @@
       "properties": {
         "method": {
           "type": "string",
-          "description": "REQUIRED. Quantization method used (e.g., 'linear', 'product_quantization', 'binary')"
+          "description": "REQUIRED. Quantization method used (e.g., 'linear', 'per_pixel_scale', 'product_quantization', 'binary')"
         },
         "original_dtype": {
           "type": "string",
@@ -173,12 +183,7 @@
           "description": "Data type after quantization (e.g., 'int8', 'uint8')"
         },
         "scale": {
-          "type": "number",
-          "description": "Scale factor for linear dequantization"
-        },
-        "offset": {
-          "type": "number",
-          "description": "Offset for linear dequantization"
+          "$ref": "#/$defs/scaleObject"
         },
         "link": {
           "type": "string",
@@ -188,6 +193,38 @@
       },
       "required": ["method", "original_dtype"],
       "additionalProperties": false
+    },
+    "scaleObject": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Scalar scale: a single global scale and offset for linear dequantization",
+          "properties": {
+            "type": { "type": "string", "const": "scalar" },
+            "scale": { "type": "number", "description": "Scale factor for linear dequantization" },
+            "offset": { "type": "number", "description": "Offset for linear dequantization (default: 0.0)" }
+          },
+          "required": ["type", "scale"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "Array scale: per-pixel scale factors stored in a separate zarr array",
+          "properties": {
+            "type": { "type": "string", "const": "array" },
+            "array_name": { "type": "string", "description": "Name of the zarr array containing per-pixel scales" },
+            "nodata": {
+              "description": "Value in the scale array indicating no data (e.g., '+inf')",
+              "oneOf": [
+                { "type": "number" },
+                { "type": "string" }
+              ]
+            }
+          },
+          "required": ["type", "array_name"],
+          "additionalProperties": false
+        }
+      ]
     }
   }
 }

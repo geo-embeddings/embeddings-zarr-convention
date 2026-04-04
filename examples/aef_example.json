@@ -14,15 +14,18 @@
     "geoemb:type": "pixel",
     "geoemb:dimensions": 64,
     "geoemb:model": "https://arxiv.org/abs/2507.22291",
-    "geoemb:source_data": "https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_SATELLITE_EMBEDDING_V1_ANNUAL",
+    "geoemb:source_data": ["https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_SATELLITE_EMBEDDING_V1_ANNUAL"],
     "geoemb:data_type": "int8",
     "geoemb:gsd": 10.0,
     "geoemb:quantization": {
       "method": "linear",
       "original_dtype": "float32",
       "quantized_dtype": "int8",
-      "scale": 0.0078125,
-      "offset": 0.0
+      "scale": {
+        "type": "scalar",
+        "scale": 0.0078125,
+        "offset": 0.0
+      }
     }
   }
 }

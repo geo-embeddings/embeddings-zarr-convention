@@ -14,7 +14,7 @@
     "geoemb:type": "chip",
     "geoemb:dimensions": 768,
     "geoemb:model": "https://huggingface.co/made-with-clay/Clay",
-    "geoemb:source_data": "https://registry.opendata.aws/sentinel-2-l2a-cogs/",
+    "geoemb:source_data": ["https://registry.opendata.aws/sentinel-2-l2a-cogs/"],
     "geoemb:data_type": "float32",
     "geoemb:gsd": 10.0,
     "geoemb:chip_layout": {
